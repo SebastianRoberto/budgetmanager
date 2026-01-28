@@ -1,0 +1,159 @@
+/* ========================================
+   CARD COMPONENT - DARK MODE READY
+   ======================================== */
+
+.card {
+  background: var(--card-bg);
+  /* Dynamic background */
+  border: 1px solid var(--border-color);
+  /* Dynamic border */
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  /* Dynamic shadow */
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--card-color, var(--primary));
+    transition: width var(--transition-fast);
+  }
+
+  &:hover::before {
+    width: 6px;
+  }
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  /* Dynamic color */
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  /* Dynamic color */
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
+
+  &.loading {
+    .skeleton {
+      display: inline-block;
+      width: 120px;
+      height: 2rem;
+      background: linear-gradient(90deg,
+          var(--bg-secondary) 25%,
+          var(--border-color) 50%,
+          var(--bg-secondary) 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+    }
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.card-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  /* Dynamic color */
+  margin: 0;
+}
+
+/* ========== CARD COLOR VARIANTS ========== */
+.card-primary {
+  --card-color: var(--primary);
+
+  .card-icon {
+    color: var(--primary);
+  }
+}
+
+.card-success {
+  --card-color: var(--success);
+
+  .card-icon {
+    color: var(--success);
+  }
+
+  .card-value {
+    color: var(--success);
+  }
+}
+
+.card-warning {
+  --card-color: #f59e0b;
+
+  .card-icon {
+    color: #f59e0b;
+  }
+
+  .card-value {
+    color: #f59e0b;
+  }
+}
+
+.card-danger {
+  --card-color: var(--danger);
+
+  .card-icon {
+    color: var(--danger);
+  }
+
+  .card-value {
+    color: var(--danger);
+  }
+}
+
+.card-info {
+  --card-color: #3b82f6;
+
+  .card-icon {
+    color: #3b82f6;
+  }
+
+  .card-value {
+    color: #3b82f6;
+  }
+}

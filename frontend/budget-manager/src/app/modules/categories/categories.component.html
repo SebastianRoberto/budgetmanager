@@ -1,0 +1,45 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <section class="categories">
+    <header class="categories-header">
+      <div>
+        <p class="subtitle">Etiquetas inteligentes</p>
+        <h1>Categorías</h1>
+      </div>
+      <button class="primary-btn" type="button" (click)="openModal()">+ Nueva categoría</button>
+    </header>
+
+    <section class="table-card">
+      <app-data-table [columns]="tableColumns" [data]="categories" [loading]="loading" [actions]="tableActions"
+        emptyMessage="Aún no tienes categorías. Crea la primera para comenzar a clasificar tus gastos."
+        (action)="handleTableAction($event)"></app-data-table>
+    </section>
+  </section>
+</main>
+
+<app-form-modal [title]="formTitle" description="Define categorías y límites mensuales para recibir alertas oportunas."
+  [show]="showModal" [submitting]="submitting" [disableSubmit]="categoryForm.invalid" (closed)="closeModal()"
+  (submitted)="saveCategory()">
+  <form [formGroup]="categoryForm" class="category-form">
+    <div class="form-field">
+      <label for="name">Nombre</label>
+      <input id="name" type="text" formControlName="name" placeholder="Ej: Comida" />
+      <small class="error" *ngIf="categoryForm.controls.name.invalid && categoryForm.controls.name.touched">
+        Ingresa un nombre de al menos 3 caracteres.
+      </small>
+    </div>
+    <div class="form-field">
+      <label for="limit">Límite mensual (opcional)</label>
+      <div class="input-number-wrapper">
+        <input id="limit" type="number" min="0" step="0.01" formControlName="monthly_limit" placeholder="Ej: 300.00" />
+        <div class="spin-arrows">
+          <button type="button" (click)="incrementAmount('monthly_limit', 1)">▲</button>
+          <button type="button" (click)="incrementAmount('monthly_limit', -1)">▼</button>
+        </div>
+      </div>
+      <small class="hint">Si lo dejas vacío, no se generarán alertas por límite.</small>
+    </div>
+  </form>
+</app-form-modal>

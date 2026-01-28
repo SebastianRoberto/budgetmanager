@@ -1,0 +1,191 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <section class="goals">
+    <header class="goals-header">
+      <div>
+        <p class="section-subtitle">Gestión de ahorros</p>
+        <h1>Metas de Ahorro</h1>
+      </div>
+      <button class="primary-btn" type="button" (click)="openCreateGoalModal()">
+        + Nueva meta
+      </button>
+    </header>
+
+    <div class="error-banner" *ngIf="error">
+      <p>{{ error }}</p>
+    </div>
+
+    <div class="goals-grid" *ngIf="!loading && goals.length > 0">
+      <article class="goal-card" *ngFor="let goal of goals">
+        <!-- CARD HEADER: Title + Action Buttons -->
+        <div class="goal-header">
+          <div class="goal-title-area">
+            <h3 class="goal-title">{{ goal.title }}</h3>
+            <p class="goal-deadline">
+              📅 Vence: {{ goal.deadline | date: 'dd/MM/yyyy' : 'UTC' }} <span class="days-left">({{
+                getDaysRemaining(goal) }}
+                días)</span>
+            </p>
+          </div>
+          <div class="goal-actions">
+            <button class="icon-btn icon-btn-green" type="button" (click)="openDepositsModal(goal)"
+              title="Ver depósitos">
+              💰
+            </button>
+            <button class="icon-btn icon-btn-blue" type="button" (click)="openEditGoalModal(goal)" title="Editar meta">
+              ✏️
+            </button>
+            <button class="icon-btn icon-btn-red danger" type="button" (click)="deleteGoal(goal.id)"
+              title="Eliminar meta">
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD BODY: Progress Bar + Info -->
+        <div class="goal-body">
+          <!-- Visual Progress Bar -->
+          <div class="progress-container">
+            <div class="progress-track">
+              <div class="progress-fill" [style.width.%]="minProgress(100, getProgressPercentage(goal))"></div>
+            </div>
+            <span class="progress-label">{{ getProgressPercentage(goal) | number: '1.0-0' }}%</span>
+          </div>
+
+          <!-- Amounts Display -->
+          <div class="amounts-row">
+            <div class="amount-saved">
+              <span class="amount-value">{{ getTotalDeposits(goal) | currency: 'USD':'symbol':'1.2-2' }}</span>
+              <span class="amount-label"> de {{ goal.target_amount | currency: 'USD':'symbol':'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <!-- Footer: Remaining Amount -->
+          <div class="goal-footer">
+            <span class="remaining" *ngIf="getRemainingAmount(goal) > 0">
+              Faltan {{ getRemainingAmount(goal) | currency: 'USD':'symbol':'1.2-2' }}
+            </span>
+            <span class="completed" *ngIf="getRemainingAmount(goal) <= 0">
+              ¡Meta completada! 🎉
+            </span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && goals.length === 0">
+      <div class="empty-icon">🎯</div>
+      <h2>No tienes metas de ahorro</h2>
+      <p>Crea tu primera meta para empezar a ahorrar de forma organizada</p>
+      <button class="primary-btn" type="button" (click)="openCreateGoalModal()">
+        + Crear primera meta
+      </button>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+      <div class="loader"></div>
+      <p>Cargando metas...</p>
+    </div>
+  </section>
+
+  <!-- Modal de Meta -->
+  <app-form-modal [show]="showGoalModal" [title]="editingGoal ? 'Editar meta' : 'Nueva meta de ahorro'" [description]="
+      editingGoal
+        ? 'Actualiza los datos de tu meta'
+        : 'Define una meta de ahorro con monto objetivo y fecha límite'
+    " (closed)="closeGoalModal()" (submitted)="saveGoal()" [submitting]="savingGoal" [disableSubmit]="goalForm.invalid"
+    [submitLabel]="editingGoal ? 'Actualizar' : 'Guardar'">
+    <form [formGroup]="goalForm" (ngSubmit)="saveGoal()" class="goal-form">
+      <!-- Title Field -->
+      <div class="form-group">
+        <label for="title">Título de la meta</label>
+        <input id="title" type="text" formControlName="title" placeholder="Ej: Ahorrar para laptop" class="form-input"
+          [class.ng-invalid]="titleInvalid" />
+        <div class="field-error" *ngIf="titleInvalid">
+          <span *ngIf="goalForm.get('title')?.errors?.['required']">
+            El título es requerido
+          </span>
+          <span *ngIf="goalForm.get('title')?.errors?.['minlength']">
+            Mínimo 3 caracteres
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Amount Field -->
+        <div class="form-group">
+          <label for="target_amount">Monto objetivo</label>
+          <div class="input-number-wrapper">
+            <input id="target_amount" type="number" formControlName="target_amount" placeholder="0.00" step="0.01"
+              min="0.01" class="form-input" [class.ng-invalid]="amountInvalid" />
+            <div class="spin-arrows">
+              <button type="button" (click)="incrementAmount('target_amount', 1)">▲</button>
+              <button type="button" (click)="incrementAmount('target_amount', -1)">▼</button>
+            </div>
+          </div>
+          <div class="field-error" *ngIf="amountInvalid">
+            El monto debe ser mayor a 0
+          </div>
+        </div>
+
+        <!-- Deadline Field -->
+        <div class="form-group">
+          <label for="deadline">Fecha límite</label>
+          <input id="deadline" type="date" formControlName="deadline" class="form-input"
+            [class.ng-invalid]="deadlineInvalid || isDeadlinePast" />
+          <div class="field-error" *ngIf="deadlineInvalid">
+            La fecha límite es requerida
+          </div>
+          <div class="field-error" *ngIf="isDeadlinePast && !deadlineInvalid">
+            La fecha no puede ser en el pasado
+          </div>
+        </div>
+      </div>
+    </form>
+  </app-form-modal>
+
+  <!-- Modal de Depósitos -->
+  <app-form-modal [show]="showDepositModal" [title]="selectedGoal ? `Depósitos: ${selectedGoal.title}` : 'Depósitos'"
+    [description]="'Gestiona los depósitos de esta meta de ahorro'" (closed)="closeDepositModal()"
+    (submitted)="saveDeposit()" [submitting]="savingDeposit" [disableSubmit]="depositForm.invalid"
+    submitLabel="Agregar depósito" size="lg">
+    <div class="deposits-content">
+      <form [formGroup]="depositForm" (ngSubmit)="saveDeposit()" class="deposit-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="deposit-amount">Monto del depósito</label>
+            <div class="input-number-wrapper">
+              <input id="deposit-amount" type="number" formControlName="amount" placeholder="0.00" step="0.01"
+                min="0.01" class="form-input" />
+              <div class="spin-arrows">
+                <button type="button" (click)="incrementAmount('amount', 1)">▲</button>
+                <button type="button" (click)="incrementAmount('amount', -1)">▼</button>
+              </div>
+            </div>
+            <div class="field-error" *ngIf="depositForm.get('amount')?.invalid && depositForm.get('amount')?.touched">
+              <span *ngIf="depositForm.get('amount')?.errors?.['required']">El monto es requerido</span>
+              <span *ngIf="depositForm.get('amount')?.errors?.['min']">El monto debe ser mayor a 0</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="deposit-date">Fecha</label>
+            <input id="deposit-date" type="date" formControlName="date" class="form-input" />
+            <div class="field-error" *ngIf="depositForm.get('date')?.invalid && depositForm.get('date')?.touched">
+              La fecha es requerida
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="deposits-list">
+        <h4>Historial de depósitos</h4>
+        <app-data-table [columns]="depositColumns" [data]="deposits" [loading]="loadingDeposits"
+          [actions]="depositActions" emptyMessage="Aún no has registrado depósitos para esta meta..."
+          (action)="handleDepositAction($event)"></app-data-table>
+      </div>
+    </div>
+  </app-form-modal>
+</main>

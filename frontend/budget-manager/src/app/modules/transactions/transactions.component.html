@@ -1,0 +1,130 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <section class="transactions">
+    <header class="transactions-header">
+      <div>
+        <p class="subtitle">Control granular</p>
+        <h1>Transacciones</h1>
+      </div>
+      <button class="primary-btn" type="button" (click)="openModal()">
+        + Nueva transacción
+      </button>
+    </header>
+
+    <section class="summary-grid">
+      <app-card title="Ingresos del mes" [value]="summary.total_income" subtitle="Totales según filtros aplicados"
+        icon="📈" color="success" [loading]="loadingTable" />
+      <app-card title="Gastos del mes" [value]="summary.total_expense" subtitle="Incluye todas las categorías" icon="📉"
+        color="danger" [loading]="loadingTable" />
+      <app-card title="Balance" [value]="summary.balance" subtitle="Ingresos - Gastos" icon="⚖️" color="info"
+        [loading]="loadingTable" />
+    </section>
+
+    <section class="filters-card">
+      <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="filters-grid">
+        <div class="form-field">
+          <label for="month">Mes</label>
+          <select id="month" formControlName="month">
+            <option *ngFor="let month of months" [value]="month.value">
+              {{ month.label }}
+            </option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="year">Año</label>
+          <select id="year" formControlName="year">
+            <option *ngFor="let year of years" [value]="year">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="type">Tipo</label>
+          <select id="type" formControlName="type">
+            <option value="">Todos</option>
+            <option value="income">Ingresos</option>
+            <option value="expense">Gastos</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="category">Categoría</label>
+          <select id="category" formControlName="category_id">
+            <option [ngValue]="null">Todas</option>
+            <option *ngFor="let category of categories" [ngValue]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+        <div class="filters-actions">
+          <button class="ghost-btn" type="button" (click)="clearFilters()">Limpiar</button>
+          <button class="ghost-btn" type="submit">Aplicar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="table-card">
+      <app-data-table [columns]="tableColumns" [data]="transactions" [loading]="loadingTable" [actions]="tableActions"
+        [showIndex]="false" emptyMessage="No se encontraron transacciones para los filtros seleccionados"
+        (action)="handleTableAction($event)"></app-data-table>
+
+      <div class="pagination" *ngIf="pagination.last_page > 1">
+        <button class="ghost-btn" type="button" [disabled]="pagination.current_page === 1" (click)="goToPage('prev')">
+          Anterior
+        </button>
+        <span>Página {{ pagination.current_page }} de {{ pagination.last_page }}</span>
+        <button class="ghost-btn" type="button" [disabled]="pagination.current_page === pagination.last_page"
+          (click)="goToPage('next')">
+          Siguiente
+        </button>
+      </div>
+    </section>
+  </section>
+</main>
+
+<app-form-modal [title]="formTitle" description="Registra tus ingresos y gastos para mantener el dashboard actualizado."
+  [submitLabel]="editingTransaction ? 'Actualizar' : 'Guardar'" [show]="showModal" [submitting]="submitting"
+  [disableSubmit]="transactionForm.invalid" size="md" (submitted)="saveTransaction()" (closed)="closeModal()">
+  <form [formGroup]="transactionForm" class="transaction-form">
+    <div class="form-field">
+      <label for="typeForm">Tipo</label>
+      <select id="typeForm" formControlName="type">
+        <option value="income">Ingreso</option>
+        <option value="expense">Gasto</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="amount">Monto</label>
+      <div class="input-number-wrapper">
+        <input id="amount" type="number" min="0" step="0.01" formControlName="amount" placeholder="0.00" />
+        <div class="spin-arrows">
+          <button type="button" (click)="incrementAmount('amount', 1)">▲</button>
+          <button type="button" (click)="incrementAmount('amount', -1)">▼</button>
+        </div>
+      </div>
+      <small class="error" *ngIf="transactionForm.controls.amount.invalid && transactionForm.controls.amount.touched">
+        Ingresa un monto válido mayor a 0.
+      </small>
+    </div>
+    <div class="form-field">
+      <label for="categoryForm">Categoría</label>
+      <select id="categoryForm" formControlName="category_id">
+        <option [ngValue]="null">Sin categoría</option>
+        <option *ngFor="let category of categories" [ngValue]="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+      <small class="hint">Opcional para ingresos.</small>
+    </div>
+    <div class="form-field">
+      <label for="date">Fecha</label>
+      <input id="date" type="date" formControlName="date" />
+    </div>
+    <div class="form-field full">
+      <label for="description">Descripción</label>
+      <textarea id="description" rows="3" maxlength="180" formControlName="description"
+        placeholder="Añade un detalle breve (opcional)"></textarea>
+    </div>
+  </form>
+</app-form-modal>

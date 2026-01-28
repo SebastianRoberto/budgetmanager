@@ -1,0 +1,17 @@
+<app-modal [title]="title" [show]="show" [size]="size" (close)="onClose()">
+  <div class="form-modal-content">
+    <p class="modal-description" *ngIf="description">{{ description }}</p>
+    <div class="modal-body-content">
+      <ng-content></ng-content>
+    </div>
+    <div class="modal-footer">
+      <button class="ghost-btn" type="button" (click)="onClose()" [disabled]="submitting">
+        {{ cancelLabel }}
+      </button>
+      <button class="primary-btn" type="button" (click)="onSubmit()" [disabled]="disableSubmit || submitting">
+        <span *ngIf="!submitting">{{ submitLabel }}</span>
+        <span *ngIf="submitting" class="loader"></span>
+      </button>
+    </div>
+  </div>
+</app-modal>

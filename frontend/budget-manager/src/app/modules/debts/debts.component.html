@@ -1,0 +1,135 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <section class="debts">
+    <header class="debts-header">
+      <div>
+        <p class="section-subtitle">Gestión de deudas</p>
+        <h1>Deudas</h1>
+      </div>
+      <button class="primary-btn" type="button" (click)="openCreateModal()">
+        + Nueva deuda
+      </button>
+    </header>
+
+    <div class="error-banner" *ngIf="error">
+      <p>{{ error }}</p>
+    </div>
+
+    <section class="summary-cards">
+      <app-card title="Debo" [value]="totalOutgoing" subtitle="{{ outgoingDebts.length }} deuda(s) pendiente(s)"
+        icon="💸" color="danger" [loading]="loading" />
+      <app-card title="Me deben" [value]="totalIncoming" subtitle="{{ incomingDebts.length }} deuda(s) pendiente(s)"
+        icon="💰" color="success" [loading]="loading" />
+      <app-card title="Vencidas" [value]="lateDebtsCount" subtitle="Requieren atención" icon="⚠️" color="warning"
+        [loading]="loading" />
+    </section>
+
+    <section class="tabs-section">
+      <div class="tabs">
+        <button class="tab" [class.active]="activeTab === 'outgoing'" (click)="switchTab('outgoing')" type="button">
+          <span class="tab-icon">💸</span>
+          <span class="tab-label">Debo</span>
+          <span class="tab-badge" *ngIf="outgoingDebts.length > 0">
+            {{ outgoingDebts.length }}
+          </span>
+        </button>
+        <button class="tab" [class.active]="activeTab === 'incoming'" (click)="switchTab('incoming')" type="button">
+          <span class="tab-icon">💰</span>
+          <span class="tab-label">Me deben</span>
+          <span class="tab-badge" *ngIf="incomingDebts.length > 0">
+            {{ incomingDebts.length }}
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <section class="table-card">
+      <app-data-table [columns]="tableColumns" [data]="filteredDebts" [loading]="loading" [actions]="tableActions"
+        emptyMessage="No tienes deudas registradas en esta categoría..."
+        (action)="handleTableAction($event)"></app-data-table>
+    </section>
+  </section>
+
+  <app-form-modal [show]="showModal" [title]="editingDebt ? 'Editar deuda' : 'Nueva deuda'" [description]="
+      editingDebt
+        ? 'Actualiza los datos de la deuda'
+        : 'Registra una nueva deuda que debes o te deben'
+    " (closed)="closeModal()" (submitted)="saveDebt()">
+    <form [formGroup]="debtForm" (ngSubmit)="saveDebt()" class="debt-form">
+      <div class="form-group">
+        <label for="type">Tipo de deuda</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" id="type-outgoing" formControlName="type" value="outgoing" />
+            <span class="radio-label">
+              <span class="radio-icon">💸</span>
+              <span>Debo</span>
+            </span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" id="type-incoming" formControlName="type" value="incoming" />
+            <span class="radio-label">
+              <span class="radio-icon">💰</span>
+              <span>Me deben</span>
+            </span>
+          </label>
+        </div>
+        <div class="field-error" *ngIf="debtForm.get('type')?.invalid && debtForm.get('type')?.touched">
+          Selecciona un tipo de deuda
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="person">Persona</label>
+        <input id="person" type="text" formControlName="person" placeholder="Nombre de la persona" class="form-input" />
+        <div class="field-error" *ngIf="debtForm.get('person')?.invalid && debtForm.get('person')?.touched">
+          <span *ngIf="debtForm.get('person')?.errors?.['required']">El nombre es requerido</span>
+          <span *ngIf="debtForm.get('person')?.errors?.['minlength']">Mínimo 2 caracteres</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="amount">Monto</label>
+          <div class="input-number-wrapper">
+            <input id="amount" type="number" formControlName="amount" placeholder="0.00" step="0.01" min="0.01"
+              class="form-input" />
+            <div class="spin-arrows">
+              <button type="button" (click)="incrementAmount('amount', 1)">▲</button>
+              <button type="button" (click)="incrementAmount('amount', -1)">▼</button>
+            </div>
+          </div>
+          <div class="field-error" *ngIf="debtForm.get('amount')?.invalid && debtForm.get('amount')?.touched">
+            <span *ngIf="debtForm.get('amount')?.errors?.['required']">El monto es requerido</span>
+            <span *ngIf="debtForm.get('amount')?.errors?.['min']">El monto debe ser mayor a 0</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="due_date">Fecha límite</label>
+          <input id="due_date" type="date" formControlName="due_date" class="form-input" />
+          <div class="field-error" *ngIf="debtForm.get('due_date')?.invalid && debtForm.get('due_date')?.touched">
+            La fecha límite es requerida
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Estado</label>
+        <select id="status" formControlName="status" class="form-input">
+          <option value="pending">Pendiente</option>
+          <option value="paid">Pagada</option>
+          <option value="late">Vencida</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Descripción (opcional)</label>
+        <textarea id="description" formControlName="description" placeholder="Notas adicionales sobre la deuda..."
+          rows="3" class="form-input"></textarea>
+      </div>
+    </form>
+  </app-form-modal>
+</main>

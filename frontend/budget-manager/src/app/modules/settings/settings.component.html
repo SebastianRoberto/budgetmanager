@@ -1,0 +1,242 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <section class="settings-page">
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="header-content">
+        <span class="header-icon">⚙️</span>
+        <div>
+          <p class="header-subtitle">Configuración de cuenta</p>
+          <h1>Ajustes</h1>
+        </div>
+      </div>
+    </header>
+
+    <!-- Master Card Container -->
+    <div class="settings-card">
+      <!-- ==================== SECCIÓN PERFIL ==================== -->
+      <section class="settings-group" [class.shake]="shakeProfile">
+        <div class="group-header">
+          <div class="group-icon profile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="group-info">
+            <h2>Información de Perfil</h2>
+            <p>Actualiza tus datos personales</p>
+          </div>
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="settings-form">
+          <!-- Nombre Input -->
+          <div class="input-group">
+            <label for="name">Nombre completo</label>
+            <div class="input-wrapper">
+              <i class="bi bi-person input-icon"></i>
+              <input id="name" type="text" formControlName="name" placeholder="Tu nombre completo"
+                [class.invalid]="profileForm.get('name')?.invalid && profileForm.get('name')?.touched"
+                [class.valid]="profileForm.get('name')?.valid && profileForm.get('name')?.touched" />
+              <i class="bi bi-check-circle validation-icon success"
+                *ngIf="profileForm.get('name')?.valid && profileForm.get('name')?.touched"></i>
+              <i class="bi bi-exclamation-circle validation-icon error"
+                *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched"></i>
+            </div>
+            <div class="field-error" *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched">
+              <span *ngIf="profileForm.get('name')?.errors?.['required']">El nombre es requerido</span>
+              <span *ngIf="profileForm.get('name')?.errors?.['minlength']">Mínimo 3 caracteres</span>
+            </div>
+          </div>
+
+          <!-- Email Input (Bloqueado) -->
+          <div class="input-group">
+            <label for="email">Correo electrónico</label>
+            <div class="input-wrapper locked">
+              <i class="bi bi-envelope input-icon"></i>
+              <input id="email" type="email" [value]="currentUser()?.email ?? ''" disabled class="locked-input" />
+              <i class="bi bi-lock-fill lock-icon"></i>
+            </div>
+            <p class="field-help">
+              <i class="bi bi-info-circle"></i>
+              El correo electrónico no puede ser modificado por seguridad
+            </p>
+          </div>
+
+          <!-- Mensaje de éxito/error del perfil -->
+          <div class="feedback-message success" *ngIf="profileSuccess">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>{{ profileSuccess }}</span>
+          </div>
+          <div class="feedback-message error" *ngIf="profileError">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>{{ profileError }}</span>
+          </div>
+
+          <!-- Botón Guardar Perfil -->
+          <button class="btn-primary" type="submit" [disabled]="profileForm.invalid || savingProfile">
+            <span class="btn-content" *ngIf="!savingProfile">
+              <i class="bi bi-check2-circle"></i>
+              Guardar Perfil
+            </span>
+            <span class="btn-loading" *ngIf="savingProfile">
+              <span class="spinner"></span>
+              Guardando...
+            </span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Divider -->
+      <hr class="divider" />
+
+      <!-- ==================== SECCIÓN SEGURIDAD ==================== -->
+      <section class="settings-group" [class.shake]="shakePassword">
+        <div class="group-header">
+          <div class="group-icon security">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <div class="group-info">
+            <h2>Seguridad</h2>
+            <p>Actualiza tu contraseña para mantener tu cuenta segura</p>
+          </div>
+        </div>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="settings-form">
+          <!-- Contraseña Actual -->
+          <div class="input-group">
+            <label for="current_password">Contraseña actual</label>
+            <div class="input-wrapper">
+              <i class="bi bi-key input-icon"></i>
+              <input id="current_password" [type]="showCurrentPassword ? 'text' : 'password'"
+                formControlName="current_password" placeholder="Ingresa tu contraseña actual"
+                [class.invalid]="passwordForm.get('current_password')?.invalid && passwordForm.get('current_password')?.touched" />
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility('current')" tabindex="-1">
+                <svg *ngIf="!showCurrentPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg *ngIf="showCurrentPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                  </path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="field-error"
+              *ngIf="passwordForm.get('current_password')?.invalid && passwordForm.get('current_password')?.touched">
+              La contraseña actual es requerida
+            </div>
+          </div>
+
+          <!-- Nueva Contraseña -->
+          <div class="input-group">
+            <label for="password">Nueva contraseña</label>
+            <div class="input-wrapper">
+              <i class="bi bi-lock input-icon"></i>
+              <input id="password" [type]="showNewPassword ? 'text' : 'password'" formControlName="password"
+                placeholder="Mínimo 8 caracteres"
+                [class.invalid]="passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched"
+                [class.valid]="passwordForm.get('password')?.valid && passwordForm.get('password')?.touched" />
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility('new')" tabindex="-1">
+                <svg *ngIf="!showNewPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg *ngIf="showNewPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                  </path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="field-error"
+              *ngIf="passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched">
+              <span *ngIf="passwordForm.get('password')?.errors?.['required']">La nueva contraseña es requerida</span>
+              <span *ngIf="passwordForm.get('password')?.errors?.['minlength']">Mínimo 8 caracteres</span>
+            </div>
+          </div>
+
+          <!-- Confirmar Nueva Contraseña -->
+          <div class="input-group">
+            <label for="password_confirmation">Confirmar nueva contraseña</label>
+            <div class="input-wrapper">
+              <i class="bi bi-lock-fill input-icon"></i>
+              <input id="password_confirmation" [type]="showConfirmPassword ? 'text' : 'password'"
+                formControlName="password_confirmation" placeholder="Repite la nueva contraseña"
+                [class.invalid]="passwordForm.get('password_confirmation')?.invalid && passwordForm.get('password_confirmation')?.touched"
+                [class.valid]="passwordForm.get('password_confirmation')?.valid && passwordForm.get('password_confirmation')?.touched && !passwordForm.get('password_confirmation')?.errors?.['passwordMismatch']"
+                [class.mismatch]="passwordForm.get('password_confirmation')?.errors?.['passwordMismatch']" />
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility('confirm')" tabindex="-1">
+                <svg *ngIf="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg *ngIf="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                  </path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="field-error"
+              *ngIf="passwordForm.get('password_confirmation')?.invalid && passwordForm.get('password_confirmation')?.touched">
+              <span *ngIf="passwordForm.get('password_confirmation')?.errors?.['required']">La confirmación es
+                requerida</span>
+              <span *ngIf="passwordForm.get('password_confirmation')?.errors?.['passwordMismatch']">❌ Las contraseñas no
+                coinciden</span>
+            </div>
+          </div>
+
+          <!-- Mensaje de éxito/error de contraseña -->
+          <div class="feedback-message success" *ngIf="passwordSuccess">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>{{ passwordSuccess }}</span>
+          </div>
+          <div class="feedback-message error" *ngIf="passwordError">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>{{ passwordError }}</span>
+          </div>
+
+          <!-- Botón Cambiar Contraseña -->
+          <button class="btn-primary" [class.success]="passwordUpdateSuccess" type="submit"
+            [disabled]="passwordForm.invalid || savingPassword">
+            <span class="btn-content" *ngIf="!savingPassword && !passwordUpdateSuccess">
+              <i class="bi bi-shield-check"></i>
+              Actualizar Contraseña
+            </span>
+            <span class="btn-loading" *ngIf="savingPassword">
+              <span class="spinner"></span>
+              Verificando...
+            </span>
+            <span class="btn-content" *ngIf="passwordUpdateSuccess && !savingPassword">
+              <i class="bi bi-check-lg"></i>
+              ¡Actualizada! ✅
+            </span>
+          </button>
+        </form>
+      </section>
+    </div>
+  </section>
+</main>

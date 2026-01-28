@@ -1,0 +1,43 @@
+<div class="alerts-panel">
+  <div class="panel-header">
+    <div>
+      <p class="panel-subtitle">Alertas inteligentes</p>
+      <h3>Últimos avisos</h3>
+    </div>
+    <a class="panel-link" routerLink="/alertas">Ver todas</a>
+  </div>
+
+  <div class="alert-skeleton" *ngIf="loading">
+    <div class="skeleton-line"></div>
+    <div class="skeleton-line short"></div>
+  </div>
+
+  <ng-container *ngIf="hasAlerts; else emptyState">
+    <article
+      class="alert-card"
+      *ngFor="let alert of alerts"
+      [class.unread]="!alert.is_read"
+      routerLink="/alertas"
+    >
+      <div class="alert-icon" [class]="'type-' + alert.type">
+        <span>⚠️</span>
+      </div>
+      <div class="alert-body">
+        <div class="alert-head">
+          <h4>{{ getAlertTitle(alert) }}</h4>
+          <span class="alert-date">{{ alert.created_at | date: 'dd MMM, HH:mm' }}</span>
+        </div>
+        <p class="alert-description">{{ getAlertDescription(alert) }}</p>
+      </div>
+    </article>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="alerts-empty">
+      <p>No tienes alertas pendientes.</p>
+      <small>Cuando algo requiera tu atención aparecerá aquí.</small>
+    </div>
+  </ng-template>
+</div>
+
+

@@ -1,0 +1,113 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <section class="alerts">
+    <header class="alerts-header">
+      <div>
+        <p class="section-subtitle">Notificaciones del sistema</p>
+        <h1>Alertas</h1>
+      </div>
+    </header>
+
+    <div class="error-banner" *ngIf="error">
+      <p>{{ error }}</p>
+    </div>
+
+    <section class="filters-section">
+      <div class="filter-tabs">
+        <button
+          class="filter-tab"
+          [class.active]="activeFilter === 'all'"
+          (click)="setFilter('all')"
+          type="button"
+        >
+          <span>Todas</span>
+          <span class="filter-badge" *ngIf="alerts.length > 0">
+            {{ alerts.length }}
+          </span>
+        </button>
+        <button
+          class="filter-tab"
+          [class.active]="activeFilter === 'unread'"
+          (click)="setFilter('unread')"
+          type="button"
+        >
+          <span>No leídas</span>
+          <span class="filter-badge unread" *ngIf="unreadCount > 0">
+            {{ unreadCount }}
+          </span>
+        </button>
+        <button
+          class="filter-tab"
+          [class.active]="activeFilter === 'read'"
+          (click)="setFilter('read')"
+          type="button"
+        >
+          <span>Leídas</span>
+          <span class="filter-badge" *ngIf="readCount > 0">
+            {{ readCount }}
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <div class="alerts-grid" *ngIf="!loading && filteredAlerts.length > 0">
+      <article
+        class="alert-card"
+        *ngFor="let alert of filteredAlerts"
+        [class.read]="alert.is_read"
+        [style.border-left-color]="getAlertColor(alert)"
+      >
+        <div class="alert-icon" [style.color]="getAlertColor(alert)">
+          {{ getAlertIcon(alert) }}
+        </div>
+        <div class="alert-content">
+          <div class="alert-header">
+            <h3 class="alert-title">{{ getAlertTitle(alert) }}</h3>
+            <span class="alert-badge" *ngIf="!alert.is_read">Nueva</span>
+          </div>
+          <p class="alert-description">{{ getAlertDescription(alert) }}</p>
+          <div class="alert-footer">
+            <span class="alert-date">{{ formatDate(alert.created_at || '') }}</span>
+            <button
+              class="mark-read-btn"
+              type="button"
+              (click)="markAsRead(alert)"
+              [disabled]="alert.is_read || markingAsRead.has(alert.id)"
+              *ngIf="!alert.is_read"
+            >
+              <span *ngIf="!markingAsRead.has(alert.id)">Marcar como leída</span>
+              <span *ngIf="markingAsRead.has(alert.id)" class="loader"></span>
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && filteredAlerts.length === 0">
+      <div class="empty-icon">🔔</div>
+      <h2>
+        {{
+          activeFilter === 'all'
+            ? 'No tienes alertas'
+            : activeFilter === 'unread'
+            ? 'No hay alertas sin leer'
+            : 'No hay alertas leídas'
+        }}
+      </h2>
+      <p>
+        {{
+          activeFilter === 'all'
+            ? 'Cuando ocurra algo importante, aparecerá aquí'
+            : 'Todas tus alertas están al día'
+        }}
+      </p>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+      <div class="loader"></div>
+      <p>Cargando alertas...</p>
+    </div>
+  </section>
+</main>

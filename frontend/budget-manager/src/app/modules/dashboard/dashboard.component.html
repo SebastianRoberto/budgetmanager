@@ -1,0 +1,92 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <section class="dashboard">
+    <header class="dashboard-header">
+      <div>
+        <p class="dashboard-subtitle">Resumen financiero</p>
+        <h1>Mes de {{ monthLabel | titlecase }}</h1>
+      </div>
+      <div class="header-actions">
+        <button class="ghost-btn" type="button" (click)="loadDashboard()" [disabled]="loading">
+          <span class="icon">⟳</span>
+          Actualizar
+        </button>
+        <button class="primary-btn" type="button" (click)="navigateTo('transacciones')">
+          + Nueva transacción
+        </button>
+      </div>
+    </header>
+
+    <div class="error-banner" *ngIf="error">
+      <p>{{ error }}</p>
+    </div>
+
+    <section class="cards-grid">
+      <app-card title="Saldo actual" [value]="data?.balance ?? 0" subtitle="Ingresos - Gastos del mes" icon="💼"
+        color="primary" [loading]="loading" />
+
+      <app-card title="Ingresos del mes" [value]="data?.monthly_income ?? 0" subtitle="Actualizado al momento" icon="💚"
+        color="success" [loading]="loading" />
+
+      <app-card title="Gasto del mes" [value]="data?.monthly_expense ?? 0" subtitle="Controla tu presupuesto" icon="💸"
+        color="danger" [loading]="loading" />
+
+      <app-card title="Meta activa" [value]="goalCardValue" [subtitle]="goalCardSubtitle" icon="🎯" color="info"
+        [loading]="loading" />
+    </section>
+
+    <section class="dashboard-body">
+      <article class="chart-card">
+        <header class="section-header">
+          <div>
+            <p class="section-subtitle">Distribución de gastos</p>
+            <h2>Por categoría</h2>
+          </div>
+          <button class="link-btn" type="button" (click)="navigateTo('categorias')">
+            Gestionar categorías
+          </button>
+        </header>
+
+        <!-- Loading skeleton -->
+        <div *ngIf="loading" class="chart-loading">
+          <div class="skeleton skeleton-card"></div>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!loading && !hasData" class="empty-state">
+          <div class="empty-icon">📊</div>
+          <div class="empty-title">No hay datos aún</div>
+          <div class="empty-message">Crea tu primera transacción para ver estadísticas</div>
+          <button class="primary-btn mt-2" (click)="navigateTo('transacciones')">
+            Crear transacción
+          </button>
+        </div>
+
+        <!-- Chart content -->
+        <div class="chart-content" *ngIf="!loading && hasData">
+          <app-pie-chart [labels]="categoryLabels" [data]="categoryTotals" currency="USD"></app-pie-chart>
+
+          <div class="category-list">
+            <div class="category-item" *ngFor="let category of categoryList">
+              <div>
+                <p class="category-name">{{ category.name }}</p>
+                <p class="category-amount">
+                  {{ category.total | currency: 'USD':'symbol':'1.2-2' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <app-alert-panel class="alerts-wrapper" [alerts]="data?.recent_alerts ?? []"
+        [loading]="loading"></app-alert-panel>
+    </section>
+  </section>
+
+  <button class="fab" type="button" (click)="navigateTo('transacciones')" aria-label="Agregar transacción">
+    +
+  </button>
+</main>

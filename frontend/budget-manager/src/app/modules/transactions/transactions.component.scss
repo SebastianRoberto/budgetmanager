@@ -1,0 +1,262 @@
+/* ========================================
+   TRANSACTIONS COMPONENT - DARK MODE READY
+   ======================================== */
+
+.main-content {
+    margin-left: 260px;
+    /* CRITICAL: Reserve space for sidebar */
+    padding: 2rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: calc(100vh - 70px);
+    /* 70px = navbar height */
+    transition: all var(--transition-base);
+}
+
+.transactions {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ========== HEADER ========== */
+.transactions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0.25rem 0 0 0;
+    }
+
+    .subtitle {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0 0 0.25rem 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+    }
+
+    .primary-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.875rem 1.5rem;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+
+        &:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+    }
+}
+
+/* ========== SUMMARY GRID ========== */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* ========== FILTERS CARD ========== */
+.filters-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+
+    &:hover {
+        box-shadow: var(--shadow-md);
+    }
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    align-items: end;
+
+    .filters-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+
+        button {
+            flex: 1;
+        }
+    }
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    input,
+    select,
+    textarea {
+        font-family: inherit;
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 0.625rem 0.875rem;
+        width: 100%;
+        transition: all var(--transition-fast);
+
+        &:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        &::placeholder {
+            color: var(--text-tertiary);
+        }
+    }
+
+    select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        padding-right: 2.5rem;
+    }
+
+    .hint {
+        font-size: 0.8125rem;
+        color: var(--text-tertiary);
+    }
+
+    .error {
+        font-size: 0.8125rem;
+        color: var(--danger);
+    }
+
+    &.full {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ========== BUTTONS ========== */
+.ghost-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover:not(:disabled) {
+        background: var(--bg-secondary);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+/* ========== TABLE CARD ========== */
+.table-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+
+    span {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+}
+
+/* ========== MODAL FORM ========== */
+.transaction-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+
+    .form-field.full {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        /* Remove margin on mobile */
+        padding: 1.5rem 1rem;
+    }
+
+    .transactions-header {
+        flex-direction: column;
+        gap: 1rem;
+
+        .primary-btn {
+            width: 100%;
+        }
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr;
+
+        .filters-actions {
+            button {
+                width: 100%;
+            }
+        }
+    }
+
+    .transaction-form {
+        grid-template-columns: 1fr;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+
+        button {
+            width: 100%;
+        }
+    }
+}

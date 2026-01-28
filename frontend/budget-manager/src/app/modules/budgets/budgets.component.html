@@ -1,0 +1,130 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <section class="budget-dashboard">
+    <!-- HEADER with horizontal Month/Year Selectors -->
+    <header class="dashboard-header">
+      <div class="header-title">
+        <p class="section-subtitle">Control de gastos mensual</p>
+        <h1>Presupuesto del mes</h1>
+      </div>
+      <form [formGroup]="filterForm" class="date-selectors">
+        <div class="select-wrapper">
+          <select id="month" formControlName="month" (change)="onFiltersChange()">
+            <option *ngFor="let month of months" [value]="month.value">
+              {{ month.label }}
+            </option>
+          </select>
+        </div>
+        <div class="select-wrapper">
+          <select id="year" formControlName="year" (change)="onFiltersChange()">
+            <option *ngFor="let year of years" [value]="year">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+      </form>
+    </header>
+
+    <!-- STATS GRID - 3 Columns -->
+    <section class="stats-grid">
+      <!-- Límite Mensual -->
+      <div class="stat-card primary">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+          <span class="stat-label">Límite Mensual</span>
+          <span class="stat-value">{{ formatCurrency(summary?.budget?.amount ?? 0) }}</span>
+          <span class="stat-subtitle">Monto máximo configurado</span>
+        </div>
+      </div>
+
+      <!-- Gasto Acumulado -->
+      <div class="stat-card danger">
+        <div class="stat-icon">💸</div>
+        <div class="stat-content">
+          <span class="stat-label">Gasto Acumulado</span>
+          <span class="stat-value">{{ formatCurrency(summary?.total_expenses ?? 0) }}</span>
+          <span class="stat-subtitle">Total de gastos en {{ monthLabel.toLowerCase() }}</span>
+        </div>
+      </div>
+
+      <!-- Disponible -->
+      <div class="stat-card" [class.success]="!isOverBudget" [class.warning]="isOverBudget">
+        <div class="stat-icon">{{ isOverBudget ? '⚠️' : '✅' }}</div>
+        <div class="stat-content">
+          <span class="stat-label">{{ isOverBudget ? 'Exceso' : 'Disponible' }}</span>
+          <span class="stat-value">{{ formatCurrency(Math.abs(summary?.remaining ?? 0)) }}</span>
+          <span class="stat-subtitle">{{ isOverBudget ? 'Por encima del límite' : 'Disponible para gastar' }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROGRESS SECTION -->
+    <section class="progress-section">
+      <div class="progress-header">
+        <div class="progress-info">
+          <span class="progress-title">Uso del presupuesto</span>
+          <span class="progress-percentage">{{ percentageUsed | number:'1.0-0' }}%</span>
+        </div>
+        <span class="status-badge" [class.success]="!isOverBudget && percentageUsed < 90"
+          [class.warning]="percentageUsed >= 70 && percentageUsed < 90"
+          [class.danger]="isOverBudget || percentageUsed >= 90">
+          <span class="badge-icon">{{ isOverBudget ? '⚠️' : '✓' }}</span>
+          {{ isOverBudget ? 'Presupuesto superado' : (percentageUsed >= 70 ? 'Cerca del límite' : 'Dentro del
+          presupuesto') }}
+        </span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" [class.success]="percentageUsed < 70"
+          [class.warning]="percentageUsed >= 70 && percentageUsed < 90" [class.danger]="percentageUsed >= 90"
+          [style.width.%]="percentageUsed > 100 ? 100 : percentageUsed">
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS CARD -->
+    <section class="settings-card">
+      <div class="settings-header">
+        <h3>Configurar presupuesto mensual</h3>
+        <p class="settings-subtitle">Define tu límite de gastos para {{ monthLabel.toLowerCase() }} {{
+          filterForm.controls.year.value }}</p>
+      </div>
+
+      <form [formGroup]="budgetForm" class="budget-form" (ngSubmit)="saveBudget()">
+        <div class="input-row">
+          <div class="input-wrapper" [class.shake]="shakeInput"
+            [class.invalid]="budgetForm.controls.amount.invalid && budgetForm.controls.amount.touched"
+            [class.warning]="isBudgetBelowExpenses"
+            [class.valid]="budgetForm.controls.amount.valid && budgetForm.controls.amount.touched && !isBudgetBelowExpenses">
+            <span class="input-icon">$</span>
+            <input id="amount" type="number" min="0" step="0.01" formControlName="amount" placeholder="Ej: 1000.00" />
+          </div>
+          <button class="save-btn" type="submit" [disabled]="budgetForm.invalid || saving"
+            [class.success]="saveSuccess">
+            <span *ngIf="!saving && !saveSuccess">Guardar presupuesto</span>
+            <span *ngIf="saveSuccess" class="success-check">✓ ¡Actualizado!</span>
+            <span *ngIf="saving" class="loader"></span>
+          </button>
+        </div>
+
+        <!-- Error message -->
+        <div class="feedback-message error"
+          *ngIf="budgetForm.controls.amount.invalid && budgetForm.controls.amount.touched">
+          <span>⚠️</span> El presupuesto debe ser un monto positivo mayor a 0.
+        </div>
+
+        <!-- Warning when budget < expenses -->
+        <div class="feedback-message warning" *ngIf="isBudgetBelowExpenses">
+          <span>⚠️</span> El presupuesto es menor al gasto actual ({{ formatCurrency(summary?.total_expenses ?? 0) }}).
+          Se generarán alertas de excedente.
+        </div>
+      </form>
+
+      <p class="helper-text">
+        <span class="info-icon">ℹ️</span>
+        Al reducir el presupuesto por debajo del gasto actual se generarán alertas automáticas.
+      </p>
+    </section>
+  </section>
+</main>

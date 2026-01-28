@@ -1,0 +1,9 @@
+/* ========================================
+   GLOBAL APP STYLES
+   ======================================== */
+
+:host {
+    display: block;
+    min-height: 100vh;
+    background: var(--bg-primary);
+}

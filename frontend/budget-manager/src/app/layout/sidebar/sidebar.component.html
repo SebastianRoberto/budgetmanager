@@ -1,0 +1,69 @@
+<div class="sidebar" [class.open]="false">
+    <div class="sidebar-header">
+        <h1 class="logo">
+            🏦 Budget Manager
+        </h1>
+    </div>
+
+    <nav class="sidebar-nav">
+        <ul class="nav-list">
+            <li>
+                <a routerLink="/dashboard" routerLinkActive="active">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/transacciones" routerLinkActive="active">
+                    <span class="nav-icon">💸</span>
+                    <span>Transacciones</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/categorias" routerLinkActive="active">
+                    <span class="nav-icon">📁</span>
+                    <span>Categorías</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/presupuesto" routerLinkActive="active">
+                    <span class="nav-icon">📅</span>
+                    <span>Presupuesto</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/deudas" routerLinkActive="active">
+                    <span class="nav-icon">💳</span>
+                    <span>Deudas</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/metas" routerLinkActive="active">
+                    <span class="nav-icon">🎯</span>
+                    <span>Metas de ahorro</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/alertas" routerLinkActive="active">
+                    <span class="nav-icon">🔔</span>
+                    <span>Alertas</span>
+                    <span *ngIf="(alertsService.unreadCount$ | async)! > 0" class="badge">
+                        {{ alertsService.unreadCount$ | async }}
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/ajustes" routerLinkActive="active">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Ajustes</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" (click)="logout()">
+                Cerrar sesión
+            </button>
+        </div>
+    </nav>
+</div>

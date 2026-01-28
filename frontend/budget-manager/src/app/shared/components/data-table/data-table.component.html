@@ -1,0 +1,60 @@
+<div class="table-wrapper">
+  <div class="table-scroll">
+    <table class="data-table" *ngIf="!loading; else loadingState">
+      <thead>
+        <tr>
+          <th *ngIf="showIndex" class="index-col">#</th>
+          <th *ngFor="let column of columns; trackBy: trackByIndex" [style.width]="column.width"
+            [class]="'align-' + (column.align || 'left')">
+            {{ column.label }}
+          </th>
+          <th *ngIf="hasActions" class="actions-col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of data; index as i; trackBy: trackByIndex" class="table-row">
+          <td *ngIf="showIndex" class="index-col">{{ i + 1 }}</td>
+          <td *ngFor="let column of columns; trackBy: trackByIndex" [class]="'align-' + (column.align || 'left')">
+            <ng-container [ngSwitch]="column.type">
+              <span *ngSwitchCase="'badge'" class="badge"
+                [class]="'badge-' + (column.badgeColorFn ? column.badgeColorFn(row) : column.badgeColor || 'info')">
+                {{ resolveValue(row, column) }}
+              </span>
+              <span *ngSwitchCase="'currency'">
+                {{ formatValue(resolveValue(row, column), column) }}
+              </span>
+              <span *ngSwitchCase="'date'">
+                {{ formatValue(resolveValue(row, column), column) }}
+              </span>
+              <span *ngSwitchDefault>
+                {{ resolveValue(row, column) }}
+              </span>
+            </ng-container>
+          </td>
+          <td *ngIf="hasActions" class="actions-col">
+            <div class="actions-wrapper">
+              <button type="button" class="table-action" *ngFor="let actionDef of actions"
+                [class]="'action-' + (actionDef.color || 'ghost')"
+                [class.hidden]="actionDef.show && !actionDef.show(row)" (click)="emitAction(actionDef, row)">
+                <span *ngIf="actionDef.icon" class="action-icon">{{ actionDef.icon }}</span>
+                {{ actionDef.label }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && (!data || data.length === 0)">
+    <p>{{ emptyMessage }}</p>
+  </div>
+</div>
+
+<ng-template #loadingState>
+  <div class="skeleton-table">
+    <div class="skeleton-row" *ngFor="let _ of [].constructor(4)">
+      <span class="skeleton-cell" *ngFor="let __ of [].constructor(columns.length + (showIndex ? 1 : 0))"></span>
+    </div>
+  </div>
+</ng-template>

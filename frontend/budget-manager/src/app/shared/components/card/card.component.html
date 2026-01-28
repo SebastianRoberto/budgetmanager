@@ -1,0 +1,21 @@
+<div class="card" [class]="'card-' + color">
+  <div class="card-icon" *ngIf="icon">
+    <span>{{ icon }}</span>
+  </div>
+  <div class="card-content">
+    <h3 class="card-title">{{ title }}</h3>
+    <div class="card-value" *ngIf="!loading">
+      <ng-container *ngIf="typeof value === 'number'; else textValue">
+        {{ value | currency:'USD':'symbol':'1.2-2' }}
+      </ng-container>
+      <ng-template #textValue>
+        {{ value }}
+      </ng-template>
+    </div>
+    <div class="card-value loading" *ngIf="loading">
+      <span class="skeleton"></span>
+    </div>
+    <p class="card-subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+  </div>
+</div>
+

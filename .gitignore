@@ -1,0 +1,43 @@
+# =========================================
+# Budget Manager - Git Ignore
+# =========================================
+
+# ---- Backend (Laravel) ----
+backend/.env
+backend/vendor/
+backend/node_modules/
+backend/storage/*.key
+backend/storage/logs/*
+backend/.phpunit.result.cache
+backend/Homestead.json
+backend/Homestead.yaml
+backend/npm-debug.log
+backend/yarn-error.log
+
+# ---- Frontend (Angular) ----
+frontend/budget-manager/node_modules/
+frontend/budget-manager/dist/
+frontend/budget-manager/.angular/
+frontend/budget-manager/.sass-cache/
+frontend/budget-manager/coverage/
+frontend/budget-manager/tmp/
+frontend/budget-manager/out-tsc/
+frontend/budget-manager/bazel-out/
+
+# ---- IDE ----
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+*.log
+
+# ---- Misc ----
+*.bak
+*.tmp

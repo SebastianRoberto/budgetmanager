@@ -1,0 +1,333 @@
+/* ========================================
+   DEBTS COMPONENT - DARK MODE READY
+   ======================================== */
+
+.main-content {
+  margin-left: 260px;
+  /* CRITICAL: Reserve space for sidebar */
+  padding: 2rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: calc(100vh - 70px);
+  transition: all var(--transition-base);
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
+}
+
+.debts {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ========== HEADER ========== */
+.debts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0.25rem 0 0 0;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.25rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .primary-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+  }
+}
+
+/* ========== SUMMARY CARDS ========== */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* ========================================
+   PROFESSIONAL TAB SWITCHER (PILL TOGGLE)
+   ======================================== */
+
+.tabs-section {
+  margin-bottom: 2rem;
+}
+
+.tabs {
+  display: inline-flex;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+  border: 1px solid var(--border-color);
+
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+
+    .tab-icon {
+      font-size: 1.125rem;
+      transition: transform 0.3s ease;
+    }
+
+    .tab-label {
+      position: relative;
+    }
+
+    .tab-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 10px;
+      background: var(--bg-primary);
+      color: var(--text-tertiary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    &:hover:not(.active) {
+      color: var(--text-primary);
+      background: var(--bg-primary);
+    }
+
+    &.active {
+      color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+      .tab-icon {
+        transform: scale(1.1);
+      }
+
+      .tab-badge {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      // Red background for "Debo"
+      &:first-child {
+        background: linear-gradient(135deg, var(--danger), #dc2626);
+      }
+
+      // Green background for "Me deben"
+      &:last-child {
+        background: linear-gradient(135deg, var(--success), #059669);
+      }
+    }
+  }
+}
+
+/* ========== TABLE CARD ========== */
+.table-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+/* ========== FORM FIELDS & DARK MODE CALENDAR FIX ========== */
+.debt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .form-input {
+      width: 100%;
+      height: 50px;
+      padding: 0.875rem 1rem;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+
+      &::placeholder {
+        color: var(--text-tertiary);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: var(--card-bg);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        transform: translateY(-1px);
+      }
+    }
+
+    textarea.form-input {
+      height: auto;
+      resize: vertical;
+    }
+
+    .field-error {
+      font-size: 0.8125rem;
+      color: var(--danger);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &::before {
+        content: '⚠️';
+      }
+    }
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Radio group styling */
+  .radio-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    .radio-option {
+      position: relative;
+      display: block;
+      cursor: pointer;
+
+      input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        &:checked+.radio-label {
+          background: var(--primary);
+          color: white;
+          border-color: var(--primary);
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+      }
+
+      .radio-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--card-bg);
+        color: var(--text-secondary);
+        font-weight: 600;
+        transition: all 0.3s ease;
+
+        .radio-icon {
+          font-size: 1.5rem;
+        }
+
+        &:hover {
+          border-color: var(--primary);
+          background: var(--bg-secondary);
+        }
+      }
+    }
+  }
+
+  /* Calendar icon fix for dark mode */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(var(--calendar-invert, 0));
+    cursor: pointer;
+  }
+
+  /* Number input spinners dark mode fix */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    filter: invert(var(--calendar-invert, 0));
+    opacity: 1;
+    cursor: pointer;
+  }
+}
+
+/* Dark mode calendar icon fix */
+body.dark-mode {
+  --calendar-invert: 1;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .debts-header {
+    flex-direction: column;
+    gap: 1rem;
+
+    .primary-btn {
+      width: 100%;
+    }
+  }
+
+  .tabs {
+    width: 100%;
+
+    .tab {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+}

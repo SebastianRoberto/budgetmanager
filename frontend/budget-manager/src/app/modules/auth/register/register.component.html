@@ -1,0 +1,140 @@
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- HEADER -->
+    <div class="auth-header">
+      <h1>Panel Financiero</h1>
+      <p>Crear Cuenta</p>
+    </div>
+
+    <!-- FORM -->
+    <form [formGroup]="registerForm" class="auth-form" (ngSubmit)="onSubmit()" [class.form-error]="showFormError">
+
+      <!-- Name Field -->
+      <div class="form-field">
+        <label>Nombre</label>
+        <div class="input-wrapper">
+          <input type="text" formControlName="name" placeholder="Nombre completo"
+            [class.valid]="registerForm.get('name')!.valid && registerForm.get('name')!.touched"
+            [class.invalid]="nameInvalid" autocomplete="name" />
+          <span class="validation-icon" *ngIf="registerForm.get('name')!.touched"
+            [class.valid]="registerForm.get('name')!.valid" [class.invalid]="nameInvalid">
+            {{ registerForm.get('name')!.valid ? '✓' : '✗' }}
+          </span>
+        </div>
+        <span class="hint">Mínimo 3 caracteres</span>
+        <span class="error-msg" *ngIf="nameInvalid">
+          <span class="icon">⚠️</span>
+          Nombre requerido (mín. 3 caracteres)
+        </span>
+        <span class="error-msg" *ngIf="getFieldError('name')">
+          <span class="icon">⚠️</span>
+          {{ getFieldError('name') }}
+        </span>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-field">
+        <label>Email</label>
+        <div class="input-wrapper">
+          <input type="email" formControlName="email" placeholder="tu@email.com"
+            [class.valid]="registerForm.get('email')!.valid && registerForm.get('email')!.touched"
+            [class.invalid]="emailInvalid" autocomplete="email" />
+          <span class="validation-icon" *ngIf="registerForm.get('email')!.touched"
+            [class.valid]="registerForm.get('email')!.valid" [class.invalid]="emailInvalid">
+            {{ registerForm.get('email')!.valid ? '✓' : '✗' }}
+          </span>
+        </div>
+        <span class="error-msg" *ngIf="emailInvalid && !getFieldError('email')">
+          <span class="icon">⚠️</span>
+          Email inválido
+        </span>
+        <span class="error-msg" *ngIf="getFieldError('email')">
+          <span class="icon">⚠️</span>
+          {{ getFieldError('email') }}
+        </span>
+      </div>
+
+      <!-- Password Field with Strength Meter -->
+      <div class="form-field">
+        <label>Contraseña</label>
+        <div class="input-wrapper">
+          <input type="password" formControlName="password" placeholder="Crea tu contraseña"
+            [class.invalid]="passwordInvalid" autocomplete="new-password" (input)="calculatePasswordStrength()" />
+        </div>
+
+        <!-- Password Strength Meter -->
+        <div class="password-strength" *ngIf="registerForm.get('password')!.value">
+          <div class="strength-bar">
+            <div class="strength-fill" [class]="passwordStrengthClass"></div>
+          </div>
+          <span class="strength-label" [class]="passwordStrengthClass">
+            {{ passwordStrengthLabel }}
+          </span>
+        </div>
+
+        <div class="password-requirements" *ngIf="registerForm.get('password')!.touched">
+          <small [class.met]="hasMinLength">✓ Mínimo 8 caracteres</small>
+        </div>
+
+        <span class="error-msg" *ngIf="passwordInvalid && !getFieldError('password')">
+          <span class="icon">⚠️</span>
+          Contraseña requerida (mín. 8 caracteres)
+        </span>
+        <span class="error-msg" *ngIf="getFieldError('password')">
+          <span class="icon">⚠️</span>
+          {{ getFieldError('password') }}
+        </span>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div class="form-field">
+        <label>Confirmar Contraseña</label>
+        <div class="input-wrapper">
+          <input type="password" formControlName="password_confirmation" placeholder="Repite tu contraseña"
+            [class.valid]="passwordsMatch && registerForm.get('password_confirmation')!.touched"
+            [class.invalid]="passwordConfirmInvalid" autocomplete="new-password" />
+          <span class="validation-icon" *ngIf="registerForm.get('password_confirmation')!.touched"
+            [class.valid]="passwordsMatch" [class.invalid]="passwordConfirmInvalid">
+            {{ passwordsMatch ? '✓' : '✗' }}
+          </span>
+        </div>
+        <span class="error-msg" *ngIf="registerForm.get('password_confirmation')!.hasError('passwordMismatch')">
+          <span class="icon">⚠️</span>
+          Las contraseñas no coinciden
+        </span>
+      </div>
+
+      <!-- ERROR BANNER -->
+      <div class="error-banner" *ngIf="errorMessage">
+        <span class="icon">⚠️</span>
+        <p>{{ errorMessage }}</p>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-btn" [class.loading]="loading" [disabled]="registerForm.invalid || loading">
+        <span *ngIf="!loading">Crear cuenta</span>
+        <span *ngIf="loading">
+          <span class="spinner"></span>
+          Creando cuenta...
+        </span>
+      </button>
+
+    </form>
+
+    <!-- FOOTER with Theme Toggle -->
+    <div class="auth-footer">
+      <p class="footer-link">
+        ¿Ya tienes cuenta?
+        <a routerLink="/login">Iniciar sesión</a>
+      </p>
+
+      <!-- THEME TOGGLE BUTTON -->
+      <button class="theme-toggle" (click)="toggleTheme()" type="button">
+        <span class="icon">{{ isDarkMode ? '☀️' : '🌙' }}</span>
+        <span>{{ isDarkMode ? 'Modo claro' : 'Modo oscuro' }}</span>
+      </button>
+    </div>
+
+  </div>
+</div>

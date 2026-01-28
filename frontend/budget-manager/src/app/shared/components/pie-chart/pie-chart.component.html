@@ -1,0 +1,13 @@
+<ng-container *ngIf="hasData; else emptyState">
+  <div class="chart-container">
+    <canvas baseChart [type]="'doughnut'" [data]="chartData" [options]="chartOptions"></canvas>
+  </div>
+</ng-container>
+
+<ng-template #emptyState>
+  <div class="chart-empty">
+    <p>Sin datos suficientes para mostrar el gráfico.</p>
+  </div>
+</ng-template>
+
+

@@ -1,0 +1,82 @@
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- HEADER -->
+    <div class="auth-header">
+      <h1>Panel Financiero</h1>
+      <p>Iniciar Sesión</p>
+    </div>
+
+    <!-- FORM -->
+    <form [formGroup]="loginForm" class="auth-form" (ngSubmit)="onSubmit()" [class.form-error]="showFormError">
+
+      <!-- Email Field -->
+      <div class="form-field">
+        <label>Email</label>
+        <div class="input-wrapper">
+          <input type="email" formControlName="email" placeholder="tu@email.com"
+            [class.valid]="loginForm.get('email')!.valid && loginForm.get('email')!.touched"
+            [class.invalid]="emailInvalid" autocomplete="email" />
+          <span class="validation-icon" *ngIf="loginForm.get('email')!.touched"
+            [class.valid]="loginForm.get('email')!.valid" [class.invalid]="emailInvalid">
+            {{ loginForm.get('email')!.valid ? '✓' : '✗' }}
+          </span>
+        </div>
+        <span class="error-msg" *ngIf="emailInvalid">
+          <span class="icon">⚠️</span>
+          Email inválido
+        </span>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-field">
+        <label>Contraseña</label>
+        <div class="input-wrapper">
+          <input type="password" formControlName="password" placeholder="Ingresa tu contraseña"
+            [class.invalid]="passwordInvalid" autocomplete="current-password" />
+        </div>
+        <span class="hint">Mínimo 8 caracteres</span>
+        <span class="error-msg" *ngIf="passwordInvalid">
+          <span class="icon">⚠️</span>
+          Contraseña requerida (mín. 8 caracteres)
+        </span>
+      </div>
+
+      <!-- ERROR BANNER -->
+      <div class="error-banner" *ngIf="errorMessage">
+        <span class="icon">⚠️</span>
+        <p>{{ errorMessage }}</p>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-btn" [class.loading]="loading" [class.success]="loginSuccess"
+        [disabled]="loginForm.invalid || loading">
+        <span *ngIf="!loading && !loginSuccess">Iniciar sesión</span>
+        <span *ngIf="loading">
+          <span class="spinner"></span>
+          Verificando...
+        </span>
+        <span *ngIf="loginSuccess">
+          <span class="checkmark">✓</span>
+          Accediendo...
+        </span>
+      </button>
+
+    </form>
+
+    <!-- FOOTER with Theme Toggle -->
+    <div class="auth-footer">
+      <p class="footer-link">
+        ¿No tienes cuenta?
+        <a routerLink="/register">Crear cuenta</a>
+      </p>
+
+      <!-- THEME TOGGLE BUTTON -->
+      <button class="theme-toggle" (click)="toggleTheme()" type="button">
+        <span class="icon">{{ isDarkMode ? '☀️' : '🌙' }}</span>
+        <span>{{ isDarkMode ? 'Modo claro' : 'Modo oscuro' }}</span>
+      </button>
+    </div>
+
+  </div>
+</div>
